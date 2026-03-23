@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>News Detail</title>
+<link rel="icon" type="image/png" href="img/logo.png">
+<link rel="stylesheet" href="style.css?v=3">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script src="firebase.js"></script>
+
+</head>
+<body>
+
+
+<nav>
+
+<div class="logo-box">
+
+<img src="logo.png" class="logo">
+
+<span>Emier English Course</span>
+
+</div>
+
+</nav>
+
+
+
+<div class="container">
+
+<a href="news.html" class="back-btn">
+← Back to News
+</a>
+
+<div id="detail" class="news-card detail-card">
+
+Loading...
+
+</div>
+
+</div>
+
+
+
+<script>
+
+// ambil id dari URL
+
+let params = new URLSearchParams(location.search);
+
+let id = params.get("id");
+
+
+if(id){
+
+db.collection("news")
+.doc(id)
+.get()
+.then(doc=>{
+
+if(doc.exists){
+
+let d = doc.data();
+
+let tgl = "";
+
+if(d.time){
+
+tgl = new Date(d.time.seconds * 1000)
+.toLocaleDateString("id-ID",{
+day:"numeric",
+month:"long",
+year:"numeric"
+});
+
+}
+
+detail.innerHTML = `
+
+<div class="news-img-box">
+<img src="${d.image}">
+</div>
+
+<h2>${d.title}</h2>
+
+<div class="news-date">${tgl} - Emier</div>
+
+<p>${d.desc.replace(/\n/g,"<br>")}</p>
+
+`;
+
+}else{
+
+detail.innerHTML = "News not found";
+
+}
+
+});
+
+}
+
+</script>
+
+</body>
+</html>

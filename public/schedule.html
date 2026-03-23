@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schedule</title>
+<link rel="icon" type="image/png" href="img/logo.png" />
+<link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase.js"></script>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav>
+
+<div class="logo-box">
+
+<img src="logo.png" class="logo">
+
+<span>Emier English Course Schedule</span>
+
+</div>
+
+</nav>
+
+
+
+<!-- TOP BAR -->
+
+<div class="schedule-top">
+
+<button onclick="history.back()" class="back-btn-schedule">
+← Back
+</button>
+
+<input
+type="text"
+id="search"
+placeholder="Search student / lesson / teacher"
+/>
+
+</div>
+
+
+
+<!-- TABLE -->
+
+<div class="table-box">
+
+<table id="scheduleTable">
+
+<thead>
+<tr>
+<th>Day</th>
+<th>Time</th>
+<th>Student</th>
+<th>Lesson</th>
+<th>Teacher</th>
+</tr>
+</thead>
+
+<tbody id="tbody"></tbody>
+
+</table>
+
+</div>
+
+
+
+<script>
+
+let orderDay = {
+Monday:1,
+Tuesday:2,
+Wednesday:3,
+Thursday:4,
+Friday:5,
+Saturday:6
+}
+
+let orderTime = {
+"09.00 - 10.00":1,
+"10.00 - 11.00":2,
+"11.00 - 12.00":3,
+"13.00 - 14.00":4,
+"14.00 - 15.00":5,
+"15.00 - 16.00":6,
+"16.00 - 17.00":7,
+"17.00 - 18.00":8,
+"19.00 - 20.00":9,
+"20.00 - 21.00":10
+}
+
+db.collection("schedule")
+.onSnapshot(snap=>{
+
+let arr=[]
+
+snap.forEach(doc=>{
+arr.push(doc.data())
+})
+
+arr.sort((a,b)=>{
+
+let d = orderDay[a.day] - orderDay[b.day]
+
+if(d !== 0) return d
+
+return orderTime[a.time] - orderTime[b.time]
+
+})
+
+render(arr)
+
+})
+
+
+
+function render(data){
+
+let s = search.value.toLowerCase()
+
+let html=""
+
+data.forEach(d=>{
+
+let text =
+d.day+d.time+d.student+d.lesson+d.teacher
+
+if(!text.toLowerCase().includes(s)) return
+
+html+=`
+
+<tr>
+<td>${d.day}</td>
+<td>${d.time}</td>
+<td>${d.student.replace(/\n/g,"<br>")}</td>
+<td>${d.lesson}</td>
+<td>${d.teacher}</td>
+</tr>
+
+`
+
+})
+
+tbody.innerHTML = html
+
+}
+
+
+
+search.oninput = ()=>{
+
+db.collection("schedule").get().then(snap=>{
+
+let arr=[]
+
+snap.forEach(doc=>{
+arr.push(doc.data())
+})
+
+arr.sort((a,b)=>orderDay[a.day]-orderDay[b.day])
+
+render(arr)
+
+})
+
+}
+
+</script>
+
+</body>
+</html>

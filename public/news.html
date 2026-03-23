@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News</title>
+<link rel="icon" type="image/png" href="img/logo.png">
+<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase.js"></script>
+</head>
+<body>
+
+<nav>
+
+<div class="logo-box">
+
+<img src="logo.png" class="logo">
+
+<span>Emier English Course</span>
+
+</div>
+
+<div class="menu-btn" id="menuBtn">☰</div>
+
+
+<ul id="navMenu">
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="news.html">News</a></li>
+
+<li><a href="about.html">About</a></li>
+
+<li>
+
+<a href="program.html">Program</a>
+
+</li>
+
+<li><a href="career.html">Career</a></li>
+
+<li><a href="contact.html">Contact</a></li>
+
+<li><a href="registration.html">Registration</a></li>
+
+</ul>
+
+</nav>
+
+<div class="container">
+
+<div class="schedule-card">
+
+<h3>Class Schedule</h3>
+
+<p>See weekly schedule</p>
+
+<button onclick="location.href='schedule.html'" class="btn-read">
+Open Schedule
+</button>
+
+</div>
+
+<h2 class="news-gr-ttl">Emier News</h2>
+
+<div id="news"></div>
+
+</div>
+<a class="wa"
+href="https://wa.me/6285178246050"
+target="_blank">
+<i class="fa-brands fa-whatsapp"></i>
+
+</a>
+
+<script>
+
+db.collection("news")
+.orderBy("time","desc")
+.onSnapshot((snap)=>{
+
+let html="";
+
+snap.forEach(doc=>{
+
+let d = doc.data();
+
+let tgl = "";
+
+if(d.time){
+
+let dateObj = d.time.seconds
+? new Date(d.time.seconds * 1000)
+: new Date(d.time);
+
+tgl = dateObj.toLocaleDateString("id-ID",{
+day:"numeric",
+month:"long",
+year:"numeric"
+});
+
+}
+
+html += `
+
+<div class="news-card">
+
+<div class="news-img-box">
+<img src="${d.image}">
+</div>
+
+<h3>${d.title}</h3>
+
+<div class="news-date">${tgl} - Emier</div>
+
+<p class="news-desc">
+${d.desc.replace(/\n/g,"<br>")}
+</p>
+
+<div class="news-actions">
+
+<button onclick="readNews('${doc.id}')" class="btn-read">
+Baca
+</button>
+
+<button onclick="copyLink('${doc.id}')" class="btn-copy">
+<i class="fa-solid fa-link"></i>
+</button>
+
+<span id="copy-${doc.id}" class="copy-msg"></span>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+news.innerHTML = html;
+
+});
+
+
+function readNews(id){
+
+location.href = "news-detail.html?id=" + id;
+
+}
+
+
+function copyLink(id){
+
+let url = location.origin + "/news-detail.html?id=" + id;
+
+navigator.clipboard.writeText(url);
+
+let msg = document.getElementById("copy-" + id);
+
+msg.innerText = "Link copied";
+
+setTimeout(()=>{
+msg.innerText = "";
+},1500);
+
+}
+
+</script>
+<script src="script.js"></script>
+</body>
+</html>

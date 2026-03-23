@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin</title>
+    <link rel="icon" type="image/png" href="img/logo.png" />
+    <link rel="stylesheet" href="style.css?v=3" />
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase.js"></script>
+    <script src="admin.js"></script>
+  </head>
+
+  <body>
+    <!-- Loading sementara -->
+    <div id="loading">Loading...</div>
+
+    <!-- Konten admin tersembunyi sampai Auth siap -->
+    <div class="container" id="mainContent" style="display: none">
+      <div class="admin-header">
+        <h2>Admin Panel</h2>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Program</th>
+              <th>HP</th>
+              <th>Tanggal</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="data"></tbody>
+        </table>
+      </div>
+
+      <div class="admin-actions">
+        <button class="btn" onclick="clearAll()">Clear Data</button>
+        <button class="btn" onclick="exportCSV()">Export CSV</button>
+      </div>
+
+      <div id="detailBox"></div>
+
+      <!-- FORM NEWS -->
+      <div class="admin-box">
+        <h2>Tambah News</h2>
+        <input id="title" placeholder="Judul" />
+        <textarea id="desc" placeholder="Deskripsi"></textarea>
+
+        <label class="file-label">
+          Pilih Foto
+          <input type="file" id="photo" onchange="previewImage(event)" />
+        </label>
+        <img id="preview" class="preview-img" />
+
+        <br />
+        <button
+          class="btn"
+          id="newsBtn"
+          onclick="addNews()"
+          style="margin-bottom: 10px"
+        >
+          Upload News
+        </button>
+        <hr />
+        <div class="news-header">
+          <h2>News List</h2>
+
+          <span id="newsToggle" class="toggle-arrow" onclick="toggleNews()">
+            ▼
+          </span>
+        </div>
+
+        <div id="newsList"></div>
+        <hr />
+      </div>
+
+      <div class="admin-box">
+        <h2>Tambah Schedule</h2>
+
+        <label>Day</label>
+        <select id="day" class="select-grey" required>
+          <option value="">Select Day</option>
+          <option>Monday</option>
+          <option>Tuesday</option>
+          <option>Wednesday</option>
+          <option>Thursday</option>
+          <option>Friday</option>
+          <option>Saturday</option>
+        </select>
+
+        <label>Time</label>
+        <select id="time" class="select-grey" required>
+          <option value="">Select Time</option>
+          <option>09.00 - 10.00</option>
+          <option>10.00 - 11.00</option>
+          <option>11.00 - 12.00</option>
+          <option>13.00 - 14.00</option>
+          <option>14.00 - 15.00</option>
+          <option>15.00 - 16.00</option>
+          <option>16.00 - 17.00</option>
+          <option>17.00 - 18.00</option>
+          <option>19.00 - 20.00</option>
+          <option>20.00 - 21.00</option>
+        </select>
+
+        <label>Student</label>
+        <textarea
+          id="student"
+          placeholder="Nama siswa, bisa koma atau enter"
+        ></textarea>
+
+        <label>Lesson</label>
+        <select id="lesson" class="select-grey" required>
+          <option value="">Select Lesson</option>
+          <option>Math</option>
+          <option>English</option>
+          <option>Math (Private)</option>
+          <option>English (Private)</option>
+          <option>Calistung</option>
+        </select>
+
+        <label>Teacher</label>
+        <select id="teacher" class="select-grey" required>
+          <option value="">Select Teacher</option>
+          <option>Mr Lutfi</option>
+          <option>Mr Robbi</option>
+          <option>Mr Dorry</option>
+          <option>Ms Echa</option>
+          <option>Ms Salwa</option>
+          <option>Ms Priya</option>
+          <option>Ms Della</option>
+          <option>Ms Erlin</option>
+        </select>
+
+        <br /><br />
+
+        <button class="btn" onclick="addSchedule()" style="margin-bottom: 10px">
+          Tambah Schedule
+        </button>
+        <span id="scheduleMsg" class="copy-msg"></span>
+        <hr />
+
+        <h2>Schedule List</h2>
+        <input
+          type="text"
+          id="scheduleSearch"
+          placeholder="Search schedule..."
+          class="schedule-search"
+        />
+        <div class="table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Student</th>
+                <th>Lesson</th>
+                <th>Teacher</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+
+            <tbody id="scheduleList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- end mainContent -->
+
+    <script>
+      // cek Auth sebelum tampilkan konten
+      auth.onAuthStateChanged((user) => {
+        if (!user) {
+          window.location.replace("login.html");
+        } else {
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("mainContent").style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>

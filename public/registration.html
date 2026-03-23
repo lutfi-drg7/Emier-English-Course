@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registration</title>
+<link rel="icon" type="image/png" href="img/logo.png">
+<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase.js"></script>
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo-box">
+
+<img src="logo.png" class="logo">
+
+<span>Emier English Course</span>
+
+</div>
+
+<div class="menu-btn" id="menuBtn">☰</div>
+
+
+<ul id="navMenu">
+
+<li><a href="index.html">Home</a></li>
+
+<li><a href="news.html">News</a></li>
+
+<li><a href="about.html">About</a></li>
+
+<li>
+
+<a href="program.html">Program</a>
+
+</li>
+
+<li><a href="career.html">Career</a></li>
+
+<li><a href="contact.html">Contact</a></li>
+
+<li><a href="registration.html">Registration</a></li>
+
+</ul>
+
+</nav>
+
+<div class="container-sec">
+
+<h2 class="news-gr-ttl">Registration Form</h2>
+
+<form id="regForm">
+
+<label>Nama Lengkap</label>
+<input type="text" id="nama" required>
+
+<label>Tanggal Lahir</label>
+<input type="text" id="lahir" placeholder="Pilih tanggal">
+
+<label>Jenis Kelamin</label>
+<select id="gender">
+<option>Laki-laki</option>
+<option>Perempuan</option>
+</select>
+
+<label>Nama Sekolah</label>
+<input type="text" id="sekolah">
+
+<label>Kelas</label>
+<input type="text" id="kelas">
+
+<label>Alamat</label>
+<input type="text" id="alamat">
+
+<label>Nomor HP</label>
+<input type="text" id="hp">
+
+<label>Nama Orang Tua</label>
+<input type="text" id="ortu">
+
+<label>Program</label>
+
+<select id="program">
+
+<option>TK English</option>
+<option>TK English + Calistung</option>
+<option>SD English</option>
+<option>SD English + Math</option>
+<option>SMP English</option>
+<option>SMP English + Math</option>
+<option>SMA English</option>
+<option>SMA English + Math</option>
+<option>Privat TK</option>
+<option>Privat SD</option>
+<option>Privat SMP</option>
+<option>Privat SMA</option>
+
+</select>
+
+<label>Periode Bayar</label>
+
+<select id="periode">
+<option>Sebelum</option>
+<option>Sesudah</option>
+</select>
+
+<label>Tanggal Bayar</label>
+<input type="text" id="tanggal" placeholder="pembayaran Berikutnya Mengikuti Tanggal Input">
+
+<button type="submit" class="reg-btn">Submit</button>
+
+</form>
+
+</div>
+<a class="wa"
+href="https://wa.me/6285178246050"
+target="_blank">
+<i class="fa-brands fa-whatsapp"></i>
+</a>
+<script src="script.js"></script>
+<script>
+
+const form = document.getElementById("regForm");
+
+form.addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const nama = document.getElementById("nama").value;
+id = generateID(nama);
+function generateID(nama){
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let randomPart = "";
+
+  for(let i = 0; i < 6; i++){
+    randomPart += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  let cleanNama = String(nama || "")
+    .replace(/\s+/g, "")
+    .toUpperCase();
+
+  return "EMR-" + randomPart + "-" + cleanNama;
+}
+
+
+try{
+
+let id;
+let exists = true;
+
+let count = 0;
+
+while(exists && count < 10){
+  id = generateID(nama);
+  const doc = await db.collection("registration").doc(id).get();
+  exists = doc.exists;
+  count++;
+}
+
+await db.collection("registration").doc(id).set({
+id: id,
+nama: document.getElementById("nama").value,
+lahir: document.getElementById("lahir").value,
+gender: document.getElementById("gender").value,
+sekolah: document.getElementById("sekolah").value,
+kelas: document.getElementById("kelas").value,
+alamat: document.getElementById("alamat").value,
+hp: document.getElementById("hp").value,
+ortu: document.getElementById("ortu").value,
+program: document.getElementById("program").value,
+periode: document.getElementById("periode").value,
+tanggal: document.getElementById("tanggal").value,
+time: new Date()
+
+});
+
+alert("Berhasil submit");
+
+form.reset();
+
+}catch(err){
+
+alert("Error: " + err);
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
